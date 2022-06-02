@@ -1,10 +1,10 @@
 package com.educative;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.util.StringUtils;
 
 import com.google.cloud.spring.pubsub.PubSubAdmin;
 
@@ -14,8 +14,7 @@ public class CreatePubSubTopicApplication implements CommandLineRunner {
 	@Autowired
 	private PubSubAdmin pubSubAdmin;
 
-	@Value("${app.pubsub.topic_id}")
-	private String topicId;
+	private String topicId = "{{topic_id}}";
 
 	public static void main(String[] args) {
 		SpringApplication.run(CreatePubSubTopicApplication.class, args);
@@ -23,13 +22,13 @@ public class CreatePubSubTopicApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		System.out.println("Provided topicId:"+topicId);
-		if (topicId == null || "{{topic_id}}".equals(topicId)) {
+
+		if (!StringUtils.hasLength(topicId)) {
 			System.out.println("Please provide a Topic ID");
 			return;
 		}
 		pubSubAdmin.createTopic(topicId);
-		System.out.println("Topic ID " + topicId + " created successfully");
+		System.out.println("Topic ID \"" + topicId + "\" created successfully");
 	}
 
 }
