@@ -13,7 +13,7 @@ public class CreatePubSubTopicApplication implements CommandLineRunner {
 
 	@Autowired
 	private PubSubAdmin pubSubAdmin;
-	
+
 	@Value("${app.pubsub.topic_id}")
 	private String topicId;
 
@@ -23,8 +23,13 @@ public class CreatePubSubTopicApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		System.out.println("Provided topicId:"+topicId);
+		if (topicId == null || "{{topic_id}}".equals(topicId)) {
+			System.out.println("Please provide a Topic ID");
+			return;
+		}
 		pubSubAdmin.createTopic(topicId);
-
+		System.out.println("Topic ID " + topicId + " created successfully");
 	}
 
 }
