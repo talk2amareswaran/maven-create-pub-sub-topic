@@ -6,6 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.util.StringUtils;
 
+import com.google.api.gax.rpc.AlreadyExistsException;
+import com.google.api.gax.rpc.UnavailableException;
 import com.google.cloud.spring.pubsub.PubSubAdmin;
 
 @SpringBootApplication
@@ -21,14 +23,24 @@ public class CreatePubSubTopicApplication implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args) {
 
 		if (!StringUtils.hasLength(topicId)) {
 			System.out.println("Please provide a Topic ID");
 			return;
 		}
-		pubSubAdmin.createTopic(topicId);
-		System.out.println("Topic ID \"" + topicId + "\" created successfully");
+
+		try {
+			pubSubAdmin.createTopic(topicId);
+			System.out.println("\n Topic ID \"" + topicId + "\" created successfully \n");
+		} catch (AlreadyExistsException ae) {
+			System.out.println("\n"+ae.getMessage()+"\n");
+		} catch (UnavailableException uae) {
+			System.out.println("\n"+uae.getMessage()+"\n");
+		} catch (Exception e) {
+			System.out.println("\n"+e.getMessage()+"\n");
+		}
+
 	}
 
 }
